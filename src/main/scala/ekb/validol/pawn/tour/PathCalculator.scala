@@ -1,14 +1,14 @@
 package com.truecaller.pawn.tour
 
 import com.truecaller.pawn.tour.PathCalculator.Location
-import com.truecaller.pawn.tour.StepSettings.Step
-import com.truecaller.pawn.tour.output.OutputInterface
+import com.truecaller.pawn.tour.model.{Direction, PieceSettings}
+import com.truecaller.pawn.tour.model.PieceSettings.Turn
 
 import scala.annotation.tailrec
 
-class PathCalculator(boardSize: Int, location: Location, stepSettings: StepSettings, output: OutputInterface[Map[Location, Option[Int]]]) {
+class PathCalculator(boardSize: Int, location: Location, stepSettings: PieceSettings) {
 
-  def start(): (Map[Location, Option[Int]], Int) = {
+  def run(): (Map[Location, Option[Int]], Int) = {
 
     val board = generateBoard()
     calculateV2(location, findLocations(location, board), 1, Map(0 -> Seq(location)), board, 0)
@@ -53,7 +53,8 @@ class PathCalculator(boardSize: Int, location: Location, stepSettings: StepSetti
   }
 
   @tailrec
-  private def calculateV2(loc: Location, nextLocations: Set[Location], step: Int, path: Map[Int, Seq[Location]], board: Map[Location, Option[Int]], iterations: Int): (Map[Location, Option[Int]], Int) = {
+  private def calculateV2(loc: Location, nextLocations: Set[Location], step: Int, path: Map[Int, Seq[Location]],
+                          board: Map[Location, Option[Int]], iterations: Int): (Map[Location, Option[Int]], Int) = {
     if (nextLocations.nonEmpty) {
       val possibleSteps = nextLocations.foldLeft(Map.empty[Location, Set[Location]]) { (acc, l) =>
         acc + (l -> findLocations(l, board))
@@ -87,18 +88,26 @@ class PathCalculator(boardSize: Int, location: Location, stepSettings: StepSetti
           val s = Math.max(step - 2, 0)
           val stepBack = path(s).head
           val b = board.updated(loc, None)
-          //output.onNext(b)
-          calculateV2(stepBack, findLocations(stepBack, b), Math.max(step - 1, 0), path.updated(step, updatedPath), b, iterations + 1)
+          val prevStep = step - 1
+          if (prevStep < 0) {
+            throw new RuntimeException(s"Can't solve task for $location")
+          } else {
+            calculateV2(stepBack, findLocations(stepBack, b), prevStep, path.updated(step, updatedPath), b, iterations + 1)
+          }
       }
-
     } else {
       if (path.size + 1 <= boardSize * boardSize) {
         //Oops huston we have a problem
         val b = board.updated(loc, None)
         val s = Math.max(step - 2, 0)
         val stepBack = path(s).head
-        //output.onNext(b)
-        calculateV2(stepBack, findLocations(stepBack, b), Math.max(step - 1, 0), path, b, iterations + 1)
+        val prevStep = step - 1
+        if (prevStep < 0) {
+          throw new RuntimeException(s"Can't solve task for $location")
+        } else {
+          calculateV2(stepBack, findLocations(stepBack, b), prevStep, path, b, iterations + 1)
+        }
+
       } else {
         (board, iterations + 1)
       }
@@ -116,14 +125,14 @@ class PathCalculator(boardSize: Int, location: Location, stepSettings: StepSetti
   private def findLocations(l: Location, board: Map[Location, Option[Int]]): Set[Location] = {
     stepSettings.steps.foldLeft(Set.empty[Location]) { (acc, s) =>
       s match {
-        case Step(v, Direction.N) => acc ++ checkLocation(l.copy(y = l.y - v), board)
-        case Step(v, Direction.S) => acc ++ checkLocation(l.copy(y = l.y + v), board)
-        case Step(v, Direction.W) => acc ++ checkLocation(l.copy(x = l.x - v), board)
-        case Step(v, Direction.E) => acc ++ checkLocation(l.copy(x = l.x + v), board)
-        case Step(v, Direction.NW) => acc ++ checkLocation(l.copy(x = l.x - v, y = l.y - v), board)
-        case Step(v, Direction.NE) => acc ++ checkLocation(l.copy(x = l.x + v, y = l.y - v), board)
-        case Step(v, Direction.SW) => acc ++ checkLocation(l.copy(x = l.x - v, y = l.y + v), board)
-        case Step(v, Direction.SE) => acc ++ checkLocation(l.copy(x = l.x + v, y = l.y + v), board)
+        case Turn(v, Direction.N) => acc ++ checkLocation(l.copy(y = l.y - v), board)
+        case Turn(v, Direction.S) => acc ++ checkLocation(l.copy(y = l.y + v), board)
+        case Turn(v, Direction.W) => acc ++ checkLocation(l.copy(x = l.x - v), board)
+        case Turn(v, Direction.E) => acc ++ checkLocation(l.copy(x = l.x + v), board)
+        case Turn(v, Direction.NW) => acc ++ checkLocation(l.copy(x = l.x - v, y = l.y - v), board)
+        case Turn(v, Direction.NE) => acc ++ checkLocation(l.copy(x = l.x + v, y = l.y - v), board)
+        case Turn(v, Direction.SW) => acc ++ checkLocation(l.copy(x = l.x - v, y = l.y + v), board)
+        case Turn(v, Direction.SE) => acc ++ checkLocation(l.copy(x = l.x + v, y = l.y + v), board)
         case _ => acc
       }
     }

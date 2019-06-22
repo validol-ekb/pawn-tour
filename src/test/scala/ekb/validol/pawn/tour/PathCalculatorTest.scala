@@ -1,23 +1,14 @@
 package com.truecaller.pawn.tour
 
 import com.truecaller.pawn.tour.PathCalculator.Location
+import com.truecaller.pawn.tour.model.PieceSettings
 import com.truecaller.pawn.tour.output.OutputInterface
 import org.scalatest.FreeSpec
 
 class PathCalculatorTest extends FreeSpec {
 
-  private val stepSettings = StepSettings(3, 3, 3, 3, 2, 2, 2, 2)
+  private val stepSettings = PieceSettings(3, 3, 3, 3, 2, 2, 2, 2)
   private val boardSize = 10
-
-  private val outputMute = new OutputInterface[Map[Location, Option[Int]]] {
-    override def onStart(): Unit = ()
-
-    override def onNext(msg: Map[Location, Option[Int]]): Unit = ()
-
-    override def onError(ex: Throwable): Unit = ()
-
-    override def shutdown(): Unit = ()
-  }
 
   "PathCalculatorTest" - {
 
@@ -27,8 +18,8 @@ class PathCalculatorTest extends FreeSpec {
         x <- 0 until 10
       } yield {
         val loc = Location(x, y)
-        val pathCalculator = new PathCalculator(boardSize, Location(x, y), stepSettings, outputMute)
-        val result = pathCalculator.start()
+        val pathCalculator = new PathCalculator(boardSize, Location(x, y), stepSettings)
+        val result = pathCalculator.run()
         loc -> (result._1.count(_._2.nonEmpty) == boardSize * boardSize)
       }).toMap
       printTestResponse(errorMatrix)

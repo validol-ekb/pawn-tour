@@ -2,6 +2,7 @@ package com.truecaller.pawn.tour
 
 import com.truecaller.pawn.tour.PathCalculator.Location
 import com.truecaller.pawn.tour.input.InputInterface
+import com.truecaller.pawn.tour.model.PieceSettings
 import com.truecaller.pawn.tour.output.OutputInterface
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,11 +12,11 @@ import scala.util.{Failure, Success}
 class Pathfinder(input: InputInterface, output: OutputInterface[Map[Location, Option[Int]]]) {
 
   private val closePromise = Promise[Unit]
-  private val stepSettings = StepSettings(3, 3, 3, 3, 2, 2, 2, 2)
+  private val stepSettings = PieceSettings(3, 3, 3, 3, 2, 2, 2, 2)
 
   private def startCalculations(parameters: InputInterface.InputParameters): Unit = {
-    val calculator = new PathCalculator(10, Location(parameters.positionX, parameters.positionY), stepSettings, output)
-    val chessboard = calculator.start()
+    val calculator = new PathCalculator(10, Location(parameters.positionX, parameters.positionY), stepSettings)
+    val chessboard = calculator.run()
     println(chessboard._1.size.toString)
     println(chessboard._1.count(_._2.nonEmpty))
     println(s"Iterations cnt: ${chessboard._2}")
