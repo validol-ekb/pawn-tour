@@ -1,8 +1,8 @@
-package com.truecaller.pawn.tour
+package ekb.validol.pawn.tour
 
-import com.truecaller.pawn.tour.PathCalculator.Location
-import com.truecaller.pawn.tour.model.{Direction, PieceSettings}
-import com.truecaller.pawn.tour.model.PieceSettings.Turn
+import ekb.validol.pawn.tour.PathCalculator.Location
+import ekb.validol.pawn.tour.model.PieceSettings.Turn
+import ekb.validol.pawn.tour.model.{Direction, PieceSettings}
 
 import scala.annotation.tailrec
 
@@ -123,7 +123,7 @@ class PathCalculator(boardSize: Int, location: Location, stepSettings: PieceSett
   }
 
   private def findLocations(l: Location, board: Map[Location, Option[Int]]): Set[Location] = {
-    stepSettings.steps.foldLeft(Set.empty[Location]) { (acc, s) =>
+    stepSettings.turns.foldLeft(Set.empty[Location]) { (acc, s) =>
       s match {
         case Turn(v, Direction.N) => acc ++ checkLocation(l.copy(y = l.y - v), board)
         case Turn(v, Direction.S) => acc ++ checkLocation(l.copy(y = l.y + v), board)

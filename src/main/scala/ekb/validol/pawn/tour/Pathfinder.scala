@@ -1,28 +1,30 @@
-package com.truecaller.pawn.tour
+package ekb.validol.pawn.tour
 
-import com.truecaller.pawn.tour.PathCalculator.Location
-import com.truecaller.pawn.tour.input.InputInterface
-import com.truecaller.pawn.tour.model.PieceSettings
-import com.truecaller.pawn.tour.output.OutputInterface
+import ekb.validol.pawn.tour.calculator.WarnsdorffsCalculator
+import ekb.validol.pawn.tour.config.Config
+import ekb.validol.pawn.tour.input.InputInterface
+import ekb.validol.pawn.tour.model.{Chessboard, Tile}
+import ekb.validol.pawn.tour.output.OutputInterface
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 
-class Pathfinder(input: InputInterface, output: OutputInterface[Map[Location, Option[Int]]]) {
+class Pathfinder(input: InputInterface, output: OutputInterface[Map[Tile, Option[Int]]]) {
 
   private val closePromise = Promise[Unit]
-  private val stepSettings = PieceSettings(3, 3, 3, 3, 2, 2, 2, 2)
 
   private def startCalculations(parameters: InputInterface.InputParameters): Unit = {
-    val calculator = new PathCalculator(10, Location(parameters.positionX, parameters.positionY), stepSettings)
-    val chessboard = calculator.run()
-    println(chessboard._1.size.toString)
-    println(chessboard._1.count(_._2.nonEmpty))
-    println(s"Iterations cnt: ${chessboard._2}")
-    //output.onNext(chessboard.size.toString)
-    //output.onNext(chessboard.count(_._2.nonEmpty).toString)
-    output.onNext(chessboard._1)
+    val chessboard = Chessboard(Config.boardSize, Config.pieceSettings)
+    WarnsdorffsCalculator.run(parameters.tile, chessboard) match {
+      case Success(value) =>
+        output.onNext(value.chessboard.result)
+        println(s"Calculation time: ${value.time} ms")
+        println(s"Iterations count: ${value.iterations}")
+      case Failure(exception) =>
+        output.onError(exception)
+    }
+    output.shutdown()
     closePromise.trySuccess()
   }
 
@@ -41,6 +43,6 @@ class Pathfinder(input: InputInterface, output: OutputInterface[Map[Location, Op
 
 object Pathfinder {
 
-  def apply(input: InputInterface, output: OutputInterface[Map[Location, Option[Int]]]): Pathfinder = new Pathfinder(input, output)
+  def apply(input: InputInterface, output: OutputInterface[Map[Tile, Option[Int]]]): Pathfinder = new Pathfinder(input, output)
 
 }

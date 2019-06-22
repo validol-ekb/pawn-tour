@@ -1,18 +1,26 @@
-package com.truecaller.pawn.tour.calculator
+package ekb.validol.pawn.tour.calculator
 
-import com.truecaller.pawn.tour.PathCalculator.Location
-import com.truecaller.pawn.tour.calculator.Calculator.CalculationResult
+import ekb.validol.pawn.tour.calculator.Calculator.{CalculationResult, TemporaryResult}
+import ekb.validol.pawn.tour.model.{Chessboard, Tile}
 
 import scala.util.Try
 
 trait Calculator {
 
-  def run(): Try[CalculationResult]
+  final def run(tile: Tile, chessboard: Chessboard): Try[CalculationResult] = {
+    val start = System.currentTimeMillis()
+    Try(calculate(tile, chessboard)).map { tmp =>
+      CalculationResult(tmp.chessboard, tmp.iterations, System.currentTimeMillis() - start)
+    }
+  }
+
+  protected def calculate(tile: Tile, chessboard: Chessboard): TemporaryResult
 
 }
 
 object Calculator {
 
-  case class CalculationResult(chessboard: Map[Location, Option[Int]], iterations: Int, time: Long)
+  case class CalculationResult(chessboard: Chessboard, iterations: Int, time: Long)
+  private[calculator] case class TemporaryResult(chessboard: Chessboard, iterations: Int)
 
 }

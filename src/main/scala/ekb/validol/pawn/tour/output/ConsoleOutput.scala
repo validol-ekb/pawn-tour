@@ -1,13 +1,13 @@
-package com.truecaller.pawn.tour.output
+package ekb.validol.pawn.tour.output
 
-import com.truecaller.pawn.tour.PathCalculator.Location
+import ekb.validol.pawn.tour.model.Tile
 
-class ConsoleOutput extends OutputInterface[Map[Location, Option[Int]]] {
+class ConsoleOutput extends OutputInterface[Map[Tile, Option[Int]]] {
   override def onStart(): Unit = {
     println("Started calculation")
   }
 
-  override def onNext(msg: Map[Location, Option[Int]]): Unit = {
+  override def onNext(msg: Map[Tile, Option[Int]]): Unit = {
     println(msg.toSeq.sortBy(_._1.position))
     val (str, _) = msg.toSeq.sortBy(_._1.position).foldLeft((new StringBuilder, 0)){ case (acc, item) =>
       val str = if (item._1.y != acc._2) {

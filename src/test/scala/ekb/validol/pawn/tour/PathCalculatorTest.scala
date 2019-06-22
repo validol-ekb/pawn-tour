@@ -1,8 +1,7 @@
-package com.truecaller.pawn.tour
+package ekb.validol.pawn.tour
 
-import com.truecaller.pawn.tour.PathCalculator.Location
-import com.truecaller.pawn.tour.model.PieceSettings
-import com.truecaller.pawn.tour.output.OutputInterface
+import ekb.validol.pawn.tour.PathCalculator.Location
+import ekb.validol.pawn.tour.model.PieceSettings
 import org.scalatest.FreeSpec
 
 class PathCalculatorTest extends FreeSpec {

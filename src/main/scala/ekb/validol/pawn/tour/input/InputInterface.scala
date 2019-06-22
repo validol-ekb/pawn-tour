@@ -1,6 +1,7 @@
-package com.truecaller.pawn.tour.input
+package ekb.validol.pawn.tour.input
 
-import com.truecaller.pawn.tour.input.InputInterface.InputParameters
+import ekb.validol.pawn.tour.input.InputInterface.InputParameters
+import ekb.validol.pawn.tour.model.Tile
 
 import scala.concurrent.Future
 
@@ -12,6 +13,6 @@ trait InputInterface {
 
 object InputInterface {
 
-  case class InputParameters(positionX: Int, positionY: Int)
+  case class InputParameters(tile: Tile)
 
 }

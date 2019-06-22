@@ -1,10 +1,11 @@
-package com.truecaller.pawn.tour.model
+package ekb.validol.pawn.tour.model
 
-import com.truecaller.pawn.tour.model.PieceSettings.Turn
+import ekb.validol.pawn.tour.model.PieceSettings.Turn
+
 
 class PieceSettings(n: Int, s: Int, w: Int, e: Int, nw: Int, ne: Int, sw: Int, se: Int) {
 
-  lazy val steps = Seq(
+  lazy val turns = Seq(
     Turn(n, Direction.N),
     Turn(s, Direction.S),
     Turn(w, Direction.W),

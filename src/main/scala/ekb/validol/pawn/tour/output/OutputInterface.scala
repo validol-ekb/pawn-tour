@@ -1,4 +1,4 @@
-package com.truecaller.pawn.tour.output
+package ekb.validol.pawn.tour.output
 
 trait OutputInterface[T] {
 
