@@ -16,7 +16,7 @@ object Formatter {
       val builder = new StringBuilder
       builder.append("\n")
 
-      val (str, _) = msg.chessboard.result.toSeq.sortBy(_._1.position).foldLeft((builder, 0)){ case (acc, item) =>
+      val (str, _) = msg.chessboard.result.toSeq.sortBy(_._1).foldLeft((builder, 0)){ case (acc, item) =>
         val str = if (item._1.y != acc._2) {
           item._2 match {
             case Some(v) if v < 10 => s"\n0$v "

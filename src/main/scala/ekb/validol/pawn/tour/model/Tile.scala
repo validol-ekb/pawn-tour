@@ -1,7 +1,8 @@
 package ekb.validol.pawn.tour.model
 
-case class Tile(x: Int, y: Int) {
+case class Tile(x: Int, y: Int) extends Ordered[Tile] {
 
-  def position: Int = s"$y$x".toInt
+  private[model] lazy val position: Int = s"$y$x".toInt
 
+  override def compare(that: Tile): Int = this.position compare that.position
 }

@@ -32,7 +32,7 @@ class WarnsdorffsCalculatorTest extends FreeSpec {
   }
 
   private def printTestResponse(errorMatrix: Map[Tile, Boolean]): Unit = {
-    val (str, _) = errorMatrix.toSeq.sortBy(_._1.position).foldLeft((new StringBuilder, 0)) { (acc, item) =>
+    val (str, _) = errorMatrix.toSeq.sortBy(_._1).foldLeft((new StringBuilder, 0)) { (acc, item) =>
       val str = if (item._1.y != acc._2) {
         if (item._2) "\n. " else "\nX "
       } else {
