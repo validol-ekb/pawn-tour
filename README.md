@@ -63,4 +63,4 @@ Calculation time: 29 ms
 
 Would you like to continue calculations?
 ```
-Then you can continue calculations by typing `y` or `yes` or you can quit with `n` or `no` answers.
+Then you can continue calculations by typing `y` or `yes` or you can quit it with `n` or `no` answers.
