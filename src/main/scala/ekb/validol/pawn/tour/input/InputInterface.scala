@@ -9,6 +9,7 @@ trait InputInterface {
 
   def start(): Future[InputParameters]
 
+  def continue(): Future[Boolean]
 }
 
 object InputInterface {

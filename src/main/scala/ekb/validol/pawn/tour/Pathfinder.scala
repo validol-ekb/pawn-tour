@@ -1,34 +1,24 @@
 package ekb.validol.pawn.tour
 
+import ekb.validol.pawn.tour.calculator.Calculator.CalculationResult
 import ekb.validol.pawn.tour.calculator.WarnsdorffsCalculator
 import ekb.validol.pawn.tour.config.Config
 import ekb.validol.pawn.tour.input.InputInterface
-import ekb.validol.pawn.tour.model.{Chessboard, Tile}
+import ekb.validol.pawn.tour.model.Chessboard
 import ekb.validol.pawn.tour.output.OutputInterface
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
+import ekb.validol.pawn.tour.model.Formatter._
 
-class Pathfinder(input: InputInterface, output: OutputInterface[Map[Tile, Option[Int]]]) {
+class Pathfinder(input: InputInterface, output: OutputInterface[CalculationResult]) {
 
   private val closePromise = Promise[Unit]
 
-  private def startCalculations(parameters: InputInterface.InputParameters): Unit = {
-    val chessboard = Chessboard(Config.boardSize, Config.pieceSettings)
-    WarnsdorffsCalculator.run(parameters.tile, chessboard) match {
-      case Success(value) =>
-        output.onNext(value.chessboard.result)
-        println(s"Calculation time: ${value.time} ms")
-        println(s"Iterations count: ${value.iterations}")
-      case Failure(exception) =>
-        output.onError(exception)
-    }
-    output.shutdown()
-    closePromise.trySuccess()
-  }
-
   def start(): Promise[Unit] = {
+    output.onStart()
+
     input.start().onComplete {
       case Success(parameters) =>
         startCalculations(parameters)
@@ -39,10 +29,33 @@ class Pathfinder(input: InputInterface, output: OutputInterface[Map[Tile, Option
     closePromise
   }
 
+  private def startCalculations(parameters: InputInterface.InputParameters): Unit = {
+    val chessboard = Chessboard(Config.boardSize, Config.pieceSettings)
+
+    chessboard.checkTile(parameters.tile) match {
+      case Some(t) =>
+        WarnsdorffsCalculator.run(t, chessboard) match {
+          case Success(result) =>
+            output.onNext(result)
+          case Failure(exception) =>
+            output.onError(exception)
+        }
+      case _ =>
+        output.onError(s"Tile ${parameters.tile.x}, ${parameters.tile.y} is out of range")
+    }
+
+    input.continue().onComplete {
+      case Success(true) => input.start().map(startCalculations)
+      case _ =>
+        output.shutdown()
+        closePromise.trySuccess()
+    }
+  }
+
 }
 
 object Pathfinder {
 
-  def apply(input: InputInterface, output: OutputInterface[Map[Tile, Option[Int]]]): Pathfinder = new Pathfinder(input, output)
+  def apply(input: InputInterface, output: OutputInterface[CalculationResult]): Pathfinder = new Pathfinder(input, output)
 
 }
