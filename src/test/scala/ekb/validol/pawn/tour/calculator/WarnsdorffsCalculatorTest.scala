@@ -1,6 +1,5 @@
-package ekb.validol.pawn.tour
+package ekb.validol.pawn.tour.calculator
 
-import ekb.validol.pawn.tour.calculator.WarnsdorffsCalculator
 import ekb.validol.pawn.tour.config.Config
 import ekb.validol.pawn.tour.model.{Chessboard, Tile}
 import org.scalatest.FreeSpec
@@ -8,7 +7,6 @@ import org.scalatest.FreeSpec
 import scala.util.{Failure, Success}
 
 class WarnsdorffsCalculatorTest extends FreeSpec {
-
 
   "WarnsdorffsCalculator" - {
 
@@ -27,6 +25,7 @@ class WarnsdorffsCalculatorTest extends FreeSpec {
         }
       }).toMap
       printTestResponse(errorMatrix)
+      assert(errorMatrix.forall(_._2))
     }
 
   }

@@ -1,7 +1,7 @@
 package ekb.validol.pawn.tour
 
 import ekb.validol.pawn.tour.calculator.Calculator.CalculationResult
-import ekb.validol.pawn.tour.calculator.WarnsdorffsCalculator
+import ekb.validol.pawn.tour.calculator.Calculator
 import ekb.validol.pawn.tour.config.Config
 import ekb.validol.pawn.tour.input.InputInterface
 import ekb.validol.pawn.tour.model.Chessboard
@@ -12,7 +12,7 @@ import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 import ekb.validol.pawn.tour.model.Formatter._
 
-class Pathfinder(input: InputInterface, output: OutputInterface[CalculationResult]) {
+class Pathfinder(calculator: Calculator, input: InputInterface, output: OutputInterface[CalculationResult]) {
 
   private val closePromise = Promise[Unit]
 
@@ -25,6 +25,7 @@ class Pathfinder(input: InputInterface, output: OutputInterface[CalculationResul
       case Failure(exception) =>
         output.onError(exception)
         output.shutdown()
+        closePromise.tryFailure(exception)
     }
     closePromise
   }
@@ -34,7 +35,7 @@ class Pathfinder(input: InputInterface, output: OutputInterface[CalculationResul
 
     chessboard.checkTile(parameters.tile) match {
       case Some(t) =>
-        WarnsdorffsCalculator.run(t, chessboard) match {
+        calculator.run(t, chessboard) match {
           case Success(result) =>
             output.onNext(result)
           case Failure(exception) =>
@@ -56,6 +57,8 @@ class Pathfinder(input: InputInterface, output: OutputInterface[CalculationResul
 
 object Pathfinder {
 
-  def apply(input: InputInterface, output: OutputInterface[CalculationResult]): Pathfinder = new Pathfinder(input, output)
+  def apply(calculator: Calculator, input: InputInterface, output: OutputInterface[CalculationResult]): Pathfinder = {
+    new Pathfinder(calculator, input, output)
+  }
 
 }

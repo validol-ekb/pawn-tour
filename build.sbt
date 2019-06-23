@@ -8,5 +8,6 @@ mainClass in (Compile, run) := Some("ekb.validol.pawn.tour.Boot")
 
 libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.0.8",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+  "org.mockito"   %  "mockito-core" % "1.9.5" % "test"
 )
