@@ -49,7 +49,7 @@ class Pathfinder(calculator: Calculator, input: InputInterface, output: OutputIn
       case Success(true) => input.start().map(startCalculations)
       case _ =>
         output.shutdown()
-        closePromise.trySuccess()
+        closePromise.trySuccess(())
     }
   }
 
