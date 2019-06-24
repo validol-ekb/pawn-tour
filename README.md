@@ -12,10 +12,10 @@ A pawn can move on 10x10 chequerboard horizontally, vertically and diagonally by
 
 * The main aim which I chased is performance, that's why I didn't use 
 any additional libraries. 
-* It's using [Warnsdorffs rule](https://en.wikipedia.org/wiki/Knight%27s_tour#Warnsdorff's_rule) as
+* I've chosen [Warnsdorffs rule](https://en.wikipedia.org/wiki/Knight%27s_tour#Warnsdorff's_rule) as
 a main algorithm. I added some optimization for situations when tile has several potential next tiles with same amount of moves.
 In this situation the best way is to choose tile which is closer to the chessboard's edges. Here is a [code implementation](https://github.com/validol-ekb/pawn-tour/blob/master/src/main/scala/ekb/validol/pawn/tour/calculator/WarnsdorffsCalculator.scala#L40).
-* In 95% it works in 100 moves which is equal to cells amount on the board. Solutions for rest situations vary in the interval from 140 to 492.
+* In 95% it works in 100 moves which is equal to tiles amount on the board. Solutions for rest situations vary in the interval from 140 to 492.
 
 ## Project structure
 
@@ -32,7 +32,7 @@ it's implementation `ConsoleInput`. This implementation works via console prompt
 it's implementation `ConsoleOutput`. This implementation prints response into `Stdout`.
 * `model` package. This package contains all application data abstractions. The most interesting class here is `Chessboard`.
 This class is chessboard abstraction which contains calculation state and provides search/validation functionality for calculations.
-* `Pathfinder` - is a main controller class which glues all application parts together and provides calculation workflow to the user.
+* `Pathfinder` is a main controller class which glues all application parts together and provides calculation workflow to the user.
 
 ## How to run
 
