@@ -36,7 +36,7 @@ This class is chessboard abstraction which contains calculation state and provid
 
 ## How to run
 
-You can run it via sbt. Just type `sbt clean run` in the project root and you will see a output
+You can run it via sbt. Just type `sbt clean run` in the project root and you will see an output
 ```text
 Pawn pathfinder application started
 Specify pawn start coordinates separated by a comma (e.g. 6,4) please
